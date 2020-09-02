@@ -1,0 +1,51 @@
+name: 'icu'
+on:
+  push:
+jobs:
+  icu:
+    if: "contains(github.event.head_commit.message, 'build-icu')"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        icu: [50.2, 51.3, 52.2, 53.2, 54.2, 55.2, 56.2, 57.2, 58.3, 59.2, 60.3, 61.2, 62.2, 63.2, 64.2, 65.1, 66.1, 67.1]
+    name: icu4c
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build icu
+        env:
+          ICU: ${{ matrix.icu }}                    
+          BINTRAY_KEY: ${{ secrets.bintray_key }}
+          BINTRAY_REPO: icu4c
+          BINTRAY_USER: ${{ github.repository_owner }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          existing_version=$(curl --user "$BINTRAY_USER":"$BINTRAY_KEY" -s https://api.bintray.com/packages/"$BINTRAY_USER"/"$BINTRAY_REPO"/icu4c_"$ICU" | sed -e 's/^.*"latest_version":"\([^"]*\)".*$/\1/' | cut -d '_' -f 1)
+          if [ "$ICU" != "$existing_version" ]; then
+            sudo curl -o /tmp/icu.tgz -sL http://github.com/unicode-org/icu/releases/download/release-${ICU/./-}/icu4c-${ICU/./_}-src.tgz
+            sudo tar -zxf /tmp/icu.tgz -C /tmp
+            (
+              cd /tmp/icu/source || exit 1
+              sudo mkdir /usr/local/icu
+              sudo ln -sf /usr/include/locale.h /usr/include/xlocale.h || true
+              sudo ./configure --prefix=/usr/local/icu
+              sudo make -j$(nproc)
+              sudo make install
+            )
+            curl -sSLO http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-10/gcc-10-base_10-20200411-0ubuntu1_amd64.deb
+            curl -sSLO http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-10/libgcc-s1_10-20200411-0ubuntu1_amd64.deb
+            curl -sSLO http://archive.ubuntu.com/ubuntu/pool/universe/libz/libzstd/zstd_1.4.4+dfsg-3_amd64.deb
+            sudo DEBIAN_FRONTEND=noninteractive dpkg -i --force-conflicts ./*.deb
+            rm -rf ./*.deb
+            zstd -V
+            sudo chmod -R 777 /usr/local
+            cd /usr/local || exit
+            sudo tar cf - icu | zstd -22 -T0 --ultra > icu4c"$ICU".tar.zst
+            curl --user "$BINTRAY_USER":"$BINTRAY_KEY" -X DELETE https://api.bintray.com/content/"$BINTRAY_USER"/"$BINTRAY_REPO"/icu4c"$ICU".tar.zst || true
+            curl --user "$BINTRAY_USER":"$BINTRAY_KEY" -T icu4c"$ICU".tar.zst https://api.bintray.com/content/"$BINTRAY_USER"/"$BINTRAY_REPO"/icu4c/"$ICU"/icu4c-"$ICU".tar.zst || true
+            curl --user "$BINTRAY_USER":"$BINTRAY_KEY" -X POST https://api.bintray.com/content/"$BINTRAY_USER"/"$BINTRAY_REPO"/icu4c/"$ICU"/publish || true
+          else
+            echo "icu4c $ICU build exists"
+          fi
