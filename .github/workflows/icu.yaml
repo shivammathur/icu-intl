@@ -19,7 +19,6 @@ jobs:
           BINTRAY_KEY: ${{ secrets.bintray_key }}
           BINTRAY_REPO: icu4c
           BINTRAY_USER: ${{ github.repository_owner }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           existing_version=$(curl --user "$BINTRAY_USER":"$BINTRAY_KEY" -s https://api.bintray.com/packages/"$BINTRAY_USER"/"$BINTRAY_REPO"/icu4c | grep -Po $ICU | head -n 1)
           if [ "$ICU" != "$existing_version" ]; then
