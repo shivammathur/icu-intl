@@ -4,7 +4,7 @@
 <a href="https://github.com/shivammathur/icu-intl" title="php-intl Builder"><img alt="Build status" src="https://github.com/shivammathur/icu-intl/workflows/php-intl/badge.svg"></a>
 <a href="https://github.com/shivammathur/icu-intl/blob/main/LICENSE" title="license"><img alt="LICENSE" src="https://img.shields.io/badge/license-MIT-428f7e.svg"></a>
 <a href="https://github.com/shivammathur/icu-intl/#icu4c-builds" title="icu4c builds"><img alt="icu4c builds" src="https://img.shields.io/badge/icu-68.2%20to%2050.2-555555.svg?logo=unicode&logoColor=white&labelColor=de0029">
-<a href="https://github.com/shivammathur/icu-intl/#php-intl" title="php intl builds"><img alt="php intl builds" src="https://img.shields.io/badge/php-5.6%20to%207.4-555555.svg?logo=php&logoColor=white&labelColor=777bb3">
+<a href="https://github.com/shivammathur/icu-intl/#php-intl" title="php intl builds"><img alt="php intl builds" src="https://img.shields.io/badge/php-5.6%20to%208.0-555555.svg?logo=php&logoColor=white&labelColor=777bb3">
 
 > Build icu4c for Ubuntu.
 
