@@ -1,0 +1,27 @@
+name: 'dispatch-single-icu'
+on:
+  workflow_dispatch:
+    inputs:
+      icu:
+        description: ICU version
+        required: true
+jobs:
+  icu:
+    runs-on: ubuntu-latest
+    name: icu4c
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build icu
+        env:
+          ICU: ${{ github.event.inputs.icu }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WORKSPACE: ${{ github.workspace }}
+        run: |
+          existing_version=$(gh release view icu4c 2>/dev/null | grep -Po $ICU | head -n 1)
+          if [ "$ICU" != "$existing_version" ]; then
+            bash src/build-icu4c.sh
+            bash src/release-icu4c.sh
+          else
+            echo "icu4c $ICU build exists"
+          fi
