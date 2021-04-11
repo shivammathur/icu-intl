@@ -2,7 +2,11 @@ ext_dir=$(php -i | grep "extension_dir => /" | sed -e "s|.*=> s*||")
 scan_dir=$(php --ini | grep additional | sed -e "s|.*: s*||")
 pecl_file="$scan_dir"/99-pecl.ini
 get_tag() {
-  echo "php-$(php -v | head -n 1 | cut -f 2 -d ' ' | cut -f 1 -d '-')"
+  if [ "${VERSION:?}" = "8.1" ]; then
+    echo "master"
+  else
+    echo "php-$(php -v | head -n 1 | cut -f 2 -d ' ' | cut -f 1 -d '-')"
+  fi
 }
 get_php() {
   curl -sL "https://github.com/php/php-src/archive/$tag.tar.gz" | tar xzf - -C "/tmp"

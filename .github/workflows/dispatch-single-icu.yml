@@ -5,9 +5,12 @@ on:
       icu:
         description: ICU version
         required: true
+      rebuild:
+        description: rebuild
+        required: false
 jobs:
   icu:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     name: icu4c
     steps:
       - name: Checkout
@@ -19,7 +22,7 @@ jobs:
           WORKSPACE: ${{ github.workspace }}
         run: |
           existing_version=$(gh release view icu4c 2>/dev/null | grep -Po $ICU | head -n 1)
-          if [ "$ICU" != "$existing_version" ]; then
+          if [ "$ICU" != "$existing_version" ] || [ "x${{github.event.inputs.rebuild}}" = "xtrue" ]; then
             bash src/build-icu4c.sh
             bash src/release-icu4c.sh
           else
