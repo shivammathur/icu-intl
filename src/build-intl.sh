@@ -1,15 +1,25 @@
 ext_dir=$(php -i | grep "extension_dir => /" | sed -e "s|.*=> s*||")
 scan_dir=$(php --ini | grep additional | sed -e "s|.*: s*||")
 pecl_file="$scan_dir"/99-pecl.ini
-get_tag() {
-  if [ "${VERSION:?}" = "8.1" ]; then
-    echo "master"
+get_version_from_branch() {
+  curl -sL https://raw.githubusercontent.com/php/php-src/"$1"/main/php_version.h | grep -Po 'PHP_VERSION "\K[0-9]+\.[0-9]+' 2>/dev/null || true
+}
+get_branch() {
+  major_minor=$(php -v | head -n 1 | grep -Po '[0-9]+\.[0-9]+')
+  branch_version=$(get_version_from_branch PHP-"$mm")
+  if [ "$major_minor" = "$branch_version" ]; then
+    echo "PHP-$mm"
   else
-    echo "php-$(php -v | head -n 1 | cut -f 2 -d ' ' | cut -f 1 -d '-')"
+    branch_version=$(get_version_from_branch master)
+    if [ "$major_minor" = "$branch_version" ]; then
+      echo "master"
+    else
+      echo "Unable to fetch php-src branch"
+    fi
   fi
 }
 get_php() {
-  curl -sL "https://github.com/php/php-src/archive/$tag.tar.gz" | tar xzf - -C "/tmp"
+  curl -sL "https://github.com/php/php-src/archive/$branch.tar.gz" | tar xzf - -C "/tmp"
 }
 check_extension() {
   extension=$1
@@ -31,10 +41,10 @@ install_icu() {
   sudo cp -r /usr/local/icu/lib/* /usr/lib/x86_64-linux-gnu/
 }
 install_intl() {
-  tag=$(get_tag)
+  branch=$(get_branch)
   get_php
   (
-    cd "/tmp/php-src-$tag/ext/intl" || exit 1
+    cd "/tmp/php-src-$branch/ext/intl" || exit 1
     phpize && sudo ./configure --with-php-config="$(command -v php-config)" --enable-intl
     echo "#define FALSE 0" >> config.h
     echo "#define TRUE 1" >> config.h
