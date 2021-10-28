@@ -41,10 +41,12 @@ install_icu() {
   sudo cp -r /usr/local/icu/lib/* /usr/lib/x86_64-linux-gnu/
 }
 install_intl() {
-  branch=$(get_branch)
   get_php
   (
-    cd "/tmp/php-src-$branch/ext/intl" || exit 1
+    for patch in patches/*.patch; do
+      patch -d /tmp/php-src -N -p1 -s < "$patch"
+    done
+    cd "/tmp/php-src/ext/intl" || exit 1    
     phpize && sudo ./configure --with-php-config="$(command -v php-config)" --enable-intl
     echo "#define FALSE 0" >> config.h
     echo "#define TRUE 1" >> config.h
