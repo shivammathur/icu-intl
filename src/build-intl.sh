@@ -5,13 +5,12 @@ get_version_from_branch() {
   curl -sL https://raw.githubusercontent.com/php/php-src/"$1"/main/php_version.h | grep -Po 'PHP_VERSION "\K[0-9]+\.[0-9]+' 2>/dev/null || true
 }
 get_branch() {
-  major_minor=$(php -v | head -n 1 | grep -Po '[0-9]+\.[0-9]+')
-  branch_version=$(get_version_from_branch PHP-"$mm")
-  if [ "$major_minor" = "$branch_version" ]; then
-    echo "PHP-$mm"
+  branch_version=$(get_version_from_branch PHP-"${VERSION:?}")
+  if [[ -n "$branch_version" ]]; then
+    echo "PHP-$VERSION"
   else
     branch_version=$(get_version_from_branch master)
-    if [ "$major_minor" = "$branch_version" ]; then
+    if [ "$VERSION" = "$branch_version" ]; then
       echo "master"
     else
       echo "Unable to fetch php-src branch"
@@ -19,7 +18,8 @@ get_branch() {
   fi
 }
 get_php() {
-  curl -sL "https://github.com/php/php-src/archive/$branch.tar.gz" | tar xzf - -C "/tmp"
+  branch=$(get_branch)
+  git clone -b "$branch" https://github.com/php/php-src.git /tmp/php-src
 }
 check_extension() {
   extension=$1
