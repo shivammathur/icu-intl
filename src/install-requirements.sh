@@ -1,4 +1,6 @@
-check_package() { ! dpkg --get-selections "$1" 2>&1 | grep -q 'no package'; }
+check_package() {
+  sudo apt-cache policy "$1" 2>/dev/null | grep -q 'Candidate'
+}
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y automake curl git gnupg make pkg-config software-properties-common sudo zstd
