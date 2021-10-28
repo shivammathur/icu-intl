@@ -43,9 +43,9 @@ install_icu() {
 install_intl() {
   get_php
   (
-    for patch in patches/*.patch; do
-      patch -d /tmp/php-src -N -p1 -s < "$patch"
-    done
+    while read patch || [[ $patch ]]; do
+      [[ "$patch" =~ $ICU ]] && patch -d /tmp/php-src -N -p1 -s < "patches/intl/$patch"
+    done < patches/intl/series-php"$VERSION"
     cd "/tmp/php-src/ext/intl" || exit 1    
     phpize && sudo ./configure --with-php-config="$(command -v php-config)" --enable-intl
     echo "#define FALSE 0" >> config.h
