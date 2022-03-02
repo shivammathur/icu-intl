@@ -15,7 +15,7 @@ jobs:
     name: icu4c
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Build icu
         env:
           ICU: ${{ matrix.icu }}
