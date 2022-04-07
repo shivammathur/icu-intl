@@ -14,10 +14,9 @@ if ! check_package php"$VERSION"; then
   chmod a+x ./install.sh
   ./install.sh local "$VERSION"
 else
-  apt-get install -y php"$VERSION" php"$VERSION"-xml php"$VERSION"-dev
+  apt-get install -y --no-install-recommends php"$VERSION" php"$VERSION"-cli php"$VERSION"-xml php"$VERSION"-dev
 fi
 
 # Smoke Tests
-php -i | grep "ICU version =>" | sed -e "s|.*=> s*||"
 php -v
 php -m
