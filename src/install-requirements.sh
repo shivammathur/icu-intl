@@ -16,3 +16,8 @@ if ! check_package php"$VERSION"; then
 else
   apt-get install -y php"$VERSION" php"$VERSION"-xml php"$VERSION"-dev
 fi
+
+# Smoke Tests
+php -i | grep "ICU version =>" | sed -e "s|.*=> s*||"
+php -v
+php -m
