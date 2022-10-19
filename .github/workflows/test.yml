@@ -57,7 +57,7 @@ jobs:
         with:
           php-version: 8.2
           extensions: intl-${{ matrix.icu }}
-      - name: Setup PHP 8.2
+      - name: Setup PHP 8.3
         uses: shivammathur/setup-php@develop
         with:
           php-version: 8.3
