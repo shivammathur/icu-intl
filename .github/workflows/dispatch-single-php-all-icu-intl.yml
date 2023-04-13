@@ -11,7 +11,7 @@ on:
 
 jobs:
   php-intl:
-    container: ubuntu:bionic
+    container: ubuntu:focal
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
