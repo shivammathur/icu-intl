@@ -3,7 +3,7 @@ check_package() {
 }
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -y automake curl git gnupg make pkg-config software-properties-common sudo zstd
+apt-get install -y automake curl git gnupg gcc g++ make pkg-config software-properties-common sudo zstd
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
 curl -o /usr/share/keyrings/gh.gpg -sL https://cli.github.com/packages/githubcli-archive-keyring.gpg
 chmod go+r /usr/share/keyrings/gh.gpg
