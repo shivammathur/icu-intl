@@ -13,10 +13,10 @@ for ppa in ppa:git-core/ppa ppa:ondrej/php; do
 done
 apt-get update
 apt-get install -y git gh
-if ! check_package php"$VERSION"; then
+if ! check_package php"$VERSION" || [ "${TS:?}" = "zts" ]; then
   curl -sSLO https://github.com/shivammathur/php-builder/releases/latest/download/install.sh
   chmod a+x ./install.sh
-  ./install.sh local "$VERSION"
+  ./install.sh local "$VERSION" "$TS"
 else
   apt-get install -y --no-install-recommends php"$VERSION" php"$VERSION"-cli php"$VERSION"-xml php"$VERSION"-dev
 fi

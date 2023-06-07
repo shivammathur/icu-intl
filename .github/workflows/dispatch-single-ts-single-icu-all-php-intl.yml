@@ -1,10 +1,17 @@
-name: 'php-intl'
+name: 'dispatch-single-ts-single-icu-all-php-intl'
 on:
   workflow_dispatch:
     inputs:
+      icu:
+        description: ICU version
+        required: true
+      ts:
+        description: thread-safety
+        required: true
       rebuild:
         description: rebuild
         required: false
+
 jobs:
   php-intl:
     container: ubuntu:focal
@@ -13,25 +20,29 @@ jobs:
       fail-fast: false
       matrix:
         php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3']
-        icu: [73.1, 72.1, 71.1, 70.1, 69.1, 68.2, 68.1, 67.1, 66.1, 65.1, 64.2, 63.2, 62.2, 61.2, 60.3, 59.2, 58.3, 57.2, 56.2, 55.2, 54.2, 53.2, 52.2, 51.3, 50.2]
-        ts: ['zts', 'nts']
     name: php-intl
     steps:
+      - name: ${{github.event.inputs.php}}
+        id: print_details
+        run: |
+          echo sender=${{github.event.sender.login}}
+          echo ICU=${{github.event.inputs.icu}}
+          echo TS=${{github.event.inputs.ts}}
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install requirements
         run: bash src/install-requirements.sh
         env:
-          TS: ${{ matrix.php }}
-          VERSION: ${{ matrix.php }}          
+          TS: ${{ github.event.inputs.ts }}
+          VERSION: ${{ matrix.php }}
       - name: Checkout
         uses: actions/checkout@v3
       - name: Update intl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ICU: ${{ matrix.icu }}
+          ICU: ${{ github.event.inputs.icu }}
           REPO: ${{ github.repository }}
-          TS: ${{ matrix.php }}
+          TS: ${{ github.event.inputs.ts }}
           VERSION: ${{ matrix.php }}
           WORKSPACE: ${{ github.workspace }}
         run: |
