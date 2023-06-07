@@ -17,6 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         icu: [50.2, 51.3, 52.2, 53.2, 54.2, 55.2, 56.2, 57.2, 58.3, 59.2, 60.3, 61.2, 62.2, 63.2, 64.2, 65.1, 66.1, 67.1, 68.1, 68.2, 69.1, 70.1, 71.1, 72.1, 73.1]
+        ts: [nts, zts]
     name: php-intl
     steps:
       - name: ${{github.event.inputs.icu}}
@@ -30,6 +31,7 @@ jobs:
         run: bash src/install-requirements.sh
         env:
           VERSION: ${{github.event.inputs.php}}
+          TS: ${{ matrix.ts }}
       - name: Checkout
         uses: actions/checkout@v3
       - name: Update intl
@@ -37,6 +39,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ICU: ${{ matrix.icu }}
           REPO: ${{ github.repository }}
+          TS: ${{ matrix.ts }}
           VERSION: ${{github.event.inputs.php}}
           WORKSPACE: ${{ github.workspace }}
         run: |
