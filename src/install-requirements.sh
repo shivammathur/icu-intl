@@ -1,5 +1,5 @@
 check_package() {
-  sudo apt-cache policy "$1" 2>/dev/null | grep -q 'Candidate'
+  sudo apt-cache policy "$1" 2>/dev/null | grep 'Candidate' | grep -Evq '(alpha|beta|rc|dev)'
 }
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
