@@ -83,9 +83,16 @@ jobs:
           extensions: intl-${{ matrix.icu }}
         env:
           phpts: ${{ matrix.ts }}
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@develop
+        with:
+          php-version: 8.4
+          extensions: intl-${{ matrix.icu }}
+        env:
+          phpts: ${{ matrix.ts }}
       - name: Testing ICU version
         run: |
-          for v in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3; do
+          for v in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3 8.4; do
             icu_version=$(php$v -i | grep "ICU version =>" | sed -e "s|.*=> s*||")
             echo php$v: $icu_version
             [ "$icu_version" != "${{ matrix.icu }}" ] && 	echo "::warning::failed to setup ${{ matrix.icu }} on php $v"
