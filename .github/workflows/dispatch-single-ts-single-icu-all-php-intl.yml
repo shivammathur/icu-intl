@@ -29,14 +29,14 @@ jobs:
           echo ICU=${{github.event.inputs.icu}}
           echo TS=${{github.event.inputs.ts}}
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install requirements
         run: bash src/install-requirements.sh
         env:
           TS: ${{ github.event.inputs.ts }}
           VERSION: ${{ matrix.php }}
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Update intl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

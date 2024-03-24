@@ -26,14 +26,14 @@ jobs:
           echo sender=${{github.event.sender.login}}
           echo PHP=${{github.event.inputs.php}}
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install requirements
         run: bash src/install-requirements.sh
         env:
           VERSION: ${{github.event.inputs.php}}
           TS: ${{ matrix.ts }}
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Update intl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
