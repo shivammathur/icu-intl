@@ -46,11 +46,12 @@ install_intl() {
     while read patch || [[ $patch ]]; do
       [[ "$patch" =~ $ICU ]] && patch -d /tmp/php-src -N -p1 -s < "patches/intl/$patch"
     done < patches/intl/series-php"$VERSION"
-    cd "/tmp/php-src/ext/intl" || exit 1    
+    cd "/tmp/php-src/ext/intl" || exit 1
     phpize && sudo ./configure --with-php-config="$(command -v php-config)" --enable-intl
     echo "#define FALSE 0" >> config.h
     echo "#define TRUE 1" >> config.h
-    make CXXFLAGS="-O2 -std=c++11 -DU_USING_ICU_NAMESPACE=1 -DTRUE=1 -DFALSE=0 $CXXFLAGS"
+    [[ "${ICU%.*}" -ge 75 ]] && CXX=17 || CXX=11
+    make CXXFLAGS="-O2 -std=c++$CXX -DU_USING_ICU_NAMESPACE=1 -DTRUE=1 -DFALSE=0 $CXXFLAGS"
     sudo cp ./modules/* "$ext_dir/"
     enable_extension intl extension
   )
