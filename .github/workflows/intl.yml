@@ -12,14 +12,14 @@ on:
         description: skip aarch64 builds
         required: false
 jobs:
-  php-intl-x86_64:
+  php-intl-x86_64_old_php_old_icu:
     container: ubuntu:focal
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
-        icu: [76.1, 75.1, 74.2, 74.1, 73.2, 73.1, 72.1, 71.1, 70.1, 69.1, 68.2, 68.1, 67.1, 66.1, 65.1, 64.2, 63.2, 62.2, 61.2, 60.3, 59.2, 58.3, 57.2, 56.2, 55.2, 54.2, 53.2, 52.2, 51.3, 50.2]
+        php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4']
+        icu: [67.1, 66.1, 65.1, 64.2, 63.2, 62.2, 61.2, 60.3, 59.2, 58.3, 57.2, 56.2, 55.2, 54.2, 53.2, 52.2, 51.3, 50.2]
         ts: ['zts', 'nts']
     if: "!contains(inputs.skip_x86_64, 'true')"
     steps:
@@ -28,7 +28,7 @@ jobs:
       - name: Install requirements
         run: bash src/install-requirements.sh
         env:
-          TS: ${{ matrix.php }}
+          TS: ${{ matrix.ts }}
           VERSION: ${{ matrix.php }}          
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ICU: ${{ matrix.icu }}
           REPO: ${{ github.repository }}
-          TS: ${{ matrix.php }}
+          TS: ${{ matrix.ts }}
           VERSION: ${{ matrix.php }}
           WORKSPACE: ${{ github.workspace }}
         run: |
@@ -48,23 +48,23 @@ jobs:
           else
             echo "intl $VERSION-$ICU build exists"
           fi
-  php-intl-aarch64:
-    container: arm64v8/ubuntu:jammy
-    runs-on: ubuntu-22.04-arm
+  php-intl-x86_64_new_php_old_icu:
+    container: ubuntu:focal
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
-        icu: [76.1, 75.1, 74.2, 74.1, 73.2, 73.1, 72.1, 71.1, 70.1, 69.1, 68.2, 68.1, 67.1, 66.1, 65.1, 64.2, 63.2, 62.2, 61.2, 60.3, 59.2, 58.3, 57.2, 56.2, 55.2, 54.2, 53.2, 52.2, 51.3, 50.2]
+        php: ['8.0', '8.1', '8.2', '8.3', '8.4']
+        icu: [67.1, 66.1, 65.1, 64.2, 63.2, 62.2, 61.2, 60.3, 59.2, 58.3, 57.2, 56.2, 55.2, 54.2, 53.2, 52.2, 51.3, 50.2]
         ts: ['zts', 'nts']
-    if: "!contains(inputs.skip_aarch64, 'true')"
+    if: "!contains(inputs.skip_x86_64, 'true')"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install requirements
         run: bash src/install-requirements.sh
         env:
-          TS: ${{ matrix.php }}
+          TS: ${{ matrix.ts }}
           VERSION: ${{ matrix.php }}          
       - name: Checkout
         uses: actions/checkout@v4
@@ -73,7 +73,223 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ICU: ${{ matrix.icu }}
           REPO: ${{ github.repository }}
-          TS: ${{ matrix.php }}
+          TS: ${{ matrix.ts }}
+          VERSION: ${{ matrix.php }}
+          WORKSPACE: ${{ github.workspace }}
+        run: |
+          existing_version=$(gh release view intl 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
+          if [ "$VERSION-$ICU" != "$existing_version" ] || [ "x${{github.event.inputs.rebuild}}" = "xtrue" ]; then
+            bash src/build-intl.sh
+            bash src/release-intl.sh
+          else
+            echo "intl $VERSION-$ICU build exists"
+          fi
+  php-intl-x86_64_new_php_new_icu:
+    container: ubuntu:focal
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.0', '8.1', '8.2', '8.3', '8.4']
+        icu: [76.1, 75.1, 74.2, 74.1, 73.2, 73.1, 72.1, 71.1, 70.1, 69.1, 68.2, 68.1]
+        ts: ['zts', 'nts']
+    if: "!contains(inputs.skip_x86_64, 'true')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install requirements
+        run: bash src/install-requirements.sh
+        env:
+          TS: ${{ matrix.ts }}
+          VERSION: ${{ matrix.php }}          
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Update intl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ICU: ${{ matrix.icu }}
+          REPO: ${{ github.repository }}
+          TS: ${{ matrix.ts }}
+          VERSION: ${{ matrix.php }}
+          WORKSPACE: ${{ github.workspace }}
+        run: |
+          existing_version=$(gh release view intl 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
+          if [ "$VERSION-$ICU" != "$existing_version" ] || [ "x${{github.event.inputs.rebuild}}" = "xtrue" ]; then
+            bash src/build-intl.sh
+            bash src/release-intl.sh
+          else
+            echo "intl $VERSION-$ICU build exists"
+          fi
+  php-intl-x86_64_old_php_new_icu:
+    container: ubuntu:focal
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4']
+        icu: [76.1, 75.1, 74.2, 74.1, 73.2, 73.1, 72.1, 71.1, 70.1, 69.1, 68.2, 68.1]
+        ts: ['zts', 'nts']
+    if: "!contains(inputs.skip_x86_64, 'true')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install requirements
+        run: bash src/install-requirements.sh
+        env:
+          TS: ${{ matrix.ts }}
+          VERSION: ${{ matrix.php }}          
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Update intl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ICU: ${{ matrix.icu }}
+          REPO: ${{ github.repository }}
+          TS: ${{ matrix.ts }}
+          VERSION: ${{ matrix.php }}
+          WORKSPACE: ${{ github.workspace }}
+        run: |
+          existing_version=$(gh release view intl 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
+          if [ "$VERSION-$ICU" != "$existing_version" ] || [ "x${{github.event.inputs.rebuild}}" = "xtrue" ]; then
+            bash src/build-intl.sh
+            bash src/release-intl.sh
+          else
+            echo "intl $VERSION-$ICU build exists"
+          fi
+  php-intl-aarch64_old_php_old_icu:
+    container: arm64v8/ubuntu:jammy
+    runs-on: ubuntu-22.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4']
+        icu: [67.1, 66.1, 65.1, 64.2, 63.2, 62.2, 61.2, 60.3, 59.2, 58.3, 57.2, 56.2, 55.2, 54.2, 53.2, 52.2, 51.3, 50.2]
+        ts: ['zts', 'nts']
+    if: "!contains(inputs.skip_aarch64, 'true')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install requirements
+        run: bash src/install-requirements.sh
+        env:
+          TS: ${{ matrix.ts }}
+          VERSION: ${{ matrix.php }}          
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Update intl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ICU: ${{ matrix.icu }}
+          REPO: ${{ github.repository }}
+          TS: ${{ matrix.ts }}
+          VERSION: ${{ matrix.php }}
+          WORKSPACE: ${{ github.workspace }}
+        run: |
+          existing_version=$(gh release view intl 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
+          if [ "$VERSION-$ICU" != "$existing_version" ] || [ "x${{github.event.inputs.rebuild}}" = "xtrue" ]; then
+            bash src/build-intl.sh
+            bash src/release-intl.sh
+          else
+            echo "intl $VERSION-$ICU build exists"
+          fi
+  php-intl-aarch64_new_php_old_icu:
+    container: arm64v8/ubuntu:jammy
+    runs-on: ubuntu-22.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.0', '8.1', '8.2', '8.3', '8.4']
+        icu: [67.1, 66.1, 65.1, 64.2, 63.2, 62.2, 61.2, 60.3, 59.2, 58.3, 57.2, 56.2, 55.2, 54.2, 53.2, 52.2, 51.3, 50.2]
+        ts: ['zts', 'nts']
+    if: "!contains(inputs.skip_aarch64, 'true')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install requirements
+        run: bash src/install-requirements.sh
+        env:
+          TS: ${{ matrix.ts }}
+          VERSION: ${{ matrix.php }}          
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Update intl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ICU: ${{ matrix.icu }}
+          REPO: ${{ github.repository }}
+          TS: ${{ matrix.ts }}
+          VERSION: ${{ matrix.php }}
+          WORKSPACE: ${{ github.workspace }}
+        run: |
+          existing_version=$(gh release view intl 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
+          if [ "$VERSION-$ICU" != "$existing_version" ] || [ "x${{github.event.inputs.rebuild}}" = "xtrue" ]; then
+            bash src/build-intl.sh
+            bash src/release-intl.sh
+          else
+            echo "intl $VERSION-$ICU build exists"
+          fi
+  php-intl-aarch64_new_php_new_icu:
+    container: arm64v8/ubuntu:jammy
+    runs-on: ubuntu-22.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.0', '8.1', '8.2', '8.3', '8.4']
+        icu: [76.1, 75.1, 74.2, 74.1, 73.2, 73.1, 72.1, 71.1, 70.1, 69.1, 68.2, 68.1]
+        ts: ['zts', 'nts']
+    if: "!contains(inputs.skip_aarch64, 'true')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install requirements
+        run: bash src/install-requirements.sh
+        env:
+          TS: ${{ matrix.ts }}
+          VERSION: ${{ matrix.php }}          
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Update intl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ICU: ${{ matrix.icu }}
+          REPO: ${{ github.repository }}
+          TS: ${{ matrix.ts }}
+          VERSION: ${{ matrix.php }}
+          WORKSPACE: ${{ github.workspace }}
+        run: |
+          existing_version=$(gh release view intl 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
+          if [ "$VERSION-$ICU" != "$existing_version" ] || [ "x${{github.event.inputs.rebuild}}" = "xtrue" ]; then
+            bash src/build-intl.sh
+            bash src/release-intl.sh
+          else
+            echo "intl $VERSION-$ICU build exists"
+          fi
+  php-intl-aarch64_old_php_new_icu:
+    container: arm64v8/ubuntu:jammy
+    runs-on: ubuntu-22.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4']
+        icu: [76.1, 75.1, 74.2, 74.1, 73.2, 73.1, 72.1, 71.1, 70.1, 69.1, 68.2, 68.1]
+        ts: ['zts', 'nts']
+    if: "!contains(inputs.skip_aarch64, 'true')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install requirements
+        run: bash src/install-requirements.sh
+        env:
+          TS: ${{ matrix.ts }}
+          VERSION: ${{ matrix.php }}          
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Update intl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ICU: ${{ matrix.icu }}
+          REPO: ${{ github.repository }}
+          TS: ${{ matrix.ts }}
           VERSION: ${{ matrix.php }}
           WORKSPACE: ${{ github.workspace }}
         run: |
