@@ -11,13 +11,19 @@ on:
 
 jobs:
   php-intl:
-    container: ubuntu:focal
-    runs-on: ubuntu-latest
+    container: ${{ matrix.container }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
         ts: ['zts', 'nts']
+        os: [ubuntu-latest, ubuntu-22.04-arm]
+        include:
+          - os: ubuntu-latest
+            container: ubuntu:focal
+          - os: ubuntu-22.04-arm
+            container: arm64v8/ubuntu:jammy
     name: php-intl
     steps:
       - name: ${{github.event.inputs.php}}

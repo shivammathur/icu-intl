@@ -1,6 +1,8 @@
 ext_dir=$(php -i | grep "extension_dir => /" | sed -e "s|.*=> s*||")
 scan_dir=$(php --ini | grep additional | sed -e "s|.*: s*||")
 pecl_file="$scan_dir"/99-pecl.ini
+arch="$(arch)"
+[[ "$arch" = "aarch64" || "$arch" = "arm64" ]] && ARCH_SUFFIX='-arm64' || ARCH_SUFFIX=''
 get_version_from_branch() {
   curl -sL https://raw.githubusercontent.com/php/php-src/"$1"/main/php_version.h | grep -Po 'PHP_VERSION "\K[0-9]+\.[0-9]+' 2>/dev/null || true
 }
@@ -35,10 +37,10 @@ enable_extension() {
   fi
 }
 install_icu() {
-  curl -o /tmp/icu.tar.zst -sL https://github.com/"${REPO:?}"/releases/download/icu4c/icu4c-"$ICU".tar.zst
+  curl -o /tmp/icu.tar.zst -sL https://github.com/"${REPO:?}"/releases/download/icu4c/icu4c-"$ICU$ARCH_SUFFIX".tar.zst
   sudo tar -I zstd -xf /tmp/icu.tar.zst -C /usr/local
   sudo cp -r /usr/local/icu/* /usr/
-  sudo cp -r /usr/local/icu/lib/* /usr/lib/x86_64-linux-gnu/
+  sudo cp -r /usr/local/icu/lib/* /usr/lib/"$(uname -m)"-linux-gnu/
 }
 install_intl() {
   get_php

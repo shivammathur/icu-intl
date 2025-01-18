@@ -1,8 +1,15 @@
 name: 'Test workflow'
 on:
   workflow_dispatch:
+    inputs:
+      skip_x86_64:
+        description: skip x86_64 builds
+        required: false
+      skip_aarch64:
+        description: skip aarch64 builds
+        required: false
 jobs:
-  intl:
+  intl_x86_64:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -10,6 +17,104 @@ jobs:
         os: [ubuntu-24.04, ubuntu-22.04, ubuntu-20.04]
         icu: [76.1, 75.1, 74.2, 74.1, 73.2, 73.1, 72.1, 71.1, 70.1, 69.1, 68.2, 68.1, 67.1, 66.1, 65.1, 64.2, 63.2, 62.2, 61.2, 60.3, 59.2, 58.3, 57.2, 56.2, 55.2, 54.2, 53.2, 52.2, 51.3, 50.2]
         ts: ['ts', 'nts']
+    if: "!contains(inputs.skip_x86_64, 'true')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup PHP 5.6
+        uses: shivammathur/setup-php@develop
+        with:
+          php-version: 5.6
+          extensions: intl-${{ matrix.icu }}
+        env:
+          phpts: ${{ matrix.ts }}
+      - name: Setup PHP 7.0
+        uses: shivammathur/setup-php@develop
+        with:
+          php-version: 7.0
+          extensions: intl-${{ matrix.icu }}
+        env:
+          phpts: ${{ matrix.ts }}
+      - name: Setup PHP 7.1
+        uses: shivammathur/setup-php@develop
+        with:
+          php-version: 7.1
+          extensions: intl-${{ matrix.icu }}
+        env:
+          phpts: ${{ matrix.ts }}
+      - name: Setup PHP 7.2
+        uses: shivammathur/setup-php@develop
+        with:
+          php-version: 7.2
+          extensions: intl-${{ matrix.icu }}
+        env:
+          phpts: ${{ matrix.ts }}
+      - name: Setup PHP 7.3
+        uses: shivammathur/setup-php@develop
+        with:
+          php-version: 7.3
+          extensions: intl-${{ matrix.icu }}
+        env:
+          phpts: ${{ matrix.ts }}
+      - name: Setup PHP 7.4
+        uses: shivammathur/setup-php@develop
+        with:
+          php-version: 7.4
+          extensions: intl-${{ matrix.icu }}
+        env:
+          phpts: ${{ matrix.ts }}
+      - name: Setup PHP 8.0
+        uses: shivammathur/setup-php@develop
+        with:
+          php-version: 8.0
+          extensions: intl-${{ matrix.icu }}
+        env:
+          phpts: ${{ matrix.ts }}
+      - name: Setup PHP 8.1
+        uses: shivammathur/setup-php@develop
+        with:
+          php-version: 8.1
+          extensions: intl-${{ matrix.icu }}
+        env:
+          phpts: ${{ matrix.ts }}
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@develop
+        with:
+          php-version: 8.2
+          extensions: intl-${{ matrix.icu }}
+        env:
+          phpts: ${{ matrix.ts }}
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@develop
+        with:
+          php-version: 8.3
+          extensions: intl-${{ matrix.icu }}
+        env:
+          phpts: ${{ matrix.ts }}
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@develop
+        with:
+          php-version: 8.4
+          extensions: intl-${{ matrix.icu }}
+        env:
+          phpts: ${{ matrix.ts }}
+      - name: Testing ICU version
+        run: |
+          for v in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3 8.4; do
+            icu_version=$(php$v -i | grep "ICU version =>" | sed -e "s|.*=> s*||")
+            echo php$v: $icu_version
+            [ "$icu_version" != "${{ matrix.icu }}" ] && 	echo "::warning::failed to setup ${{ matrix.icu }} on php $v"
+            php$v -v
+          done
+  intl_aarch64:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04-arm, ubuntu-24.04-arm]
+        icu: [76.1, 75.1, 74.2, 74.1, 73.2, 73.1, 72.1, 71.1, 70.1, 69.1, 68.2, 68.1, 67.1, 66.1, 65.1, 64.2, 63.2, 62.2, 61.2, 60.3, 59.2, 58.3, 57.2, 56.2, 55.2, 54.2, 53.2, 52.2, 51.3, 50.2]
+        ts: ['ts', 'nts']
+    if: "!contains(inputs.skip_aarch64, 'true')"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
