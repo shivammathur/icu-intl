@@ -13,7 +13,7 @@ on:
         required: false
 jobs:
   php-intl-x86_64_old_php_old_icu:
-    container: ubuntu:focal
+    container: ubuntu:jammy
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -49,7 +49,7 @@ jobs:
             echo "intl $VERSION-$ICU build exists"
           fi
   php-intl-x86_64_new_php_old_icu:
-    container: ubuntu:focal
+    container: ubuntu:jammy
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -85,7 +85,7 @@ jobs:
             echo "intl $VERSION-$ICU build exists"
           fi
   php-intl-x86_64_new_php_new_icu:
-    container: ubuntu:focal
+    container: ubuntu:jammy
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -121,7 +121,7 @@ jobs:
             echo "intl $VERSION-$ICU build exists"
           fi
   php-intl-x86_64_old_php_new_icu:
-    container: ubuntu:focal
+    container: ubuntu:jammy
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

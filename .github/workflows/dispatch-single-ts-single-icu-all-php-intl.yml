@@ -23,7 +23,7 @@ jobs:
         os: [ubuntu-latest, ubuntu-22.04-arm]
         include:
           - os: ubuntu-latest
-            container: ubuntu:focal
+            container: ubuntu:jammy
           - os: ubuntu-22.04-arm
             container: arm64v8/ubuntu:jammy
     name: php-intl
