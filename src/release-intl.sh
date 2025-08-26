@@ -8,8 +8,8 @@ arch="$(arch)"
 sudo cp intl.so "${WORKSPACE:?}"/php"$VERSION"-intl-"$ICU$suffix$ARCH_SUFFIX".so
 cd "${WORKSPACE:?}" || exit 1
 git config --global --add safe.directory "${WORKSPACE:?}"
-if ! gh release view intl; then
-  gh release create "intl" php"$VERSION"-intl-"$ICU$suffix$ARCH_SUFFIX".so -t "intl" -n "intl"
+if ! gh release view intl-$ICU; then
+  gh release create "intl-$ICU" php"$VERSION"-intl-"$ICU$suffix$ARCH_SUFFIX".so -t "intl" -n "intl"
 else
-  gh release upload "intl" php"$VERSION"-intl-"$ICU$suffix$ARCH_SUFFIX".so --clobber
+  gh release upload "intl-$ICU" php"$VERSION"-intl-"$ICU$suffix$ARCH_SUFFIX".so --clobber
 fi
