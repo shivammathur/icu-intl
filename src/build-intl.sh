@@ -49,7 +49,7 @@ install_intl() {
       [[ "$patch" =~ $ICU ]] && patch -d /tmp/php-src -N -p1 -s < "patches/intl/$patch"
     done < patches/intl/series-php"$VERSION"
     cd "/tmp/php-src/ext/intl" || exit 1
-    phpize && sudo ./configure --with-php-config="$(command -v php-config)" --enable-intl
+    ./buildconf && phpize && sudo ./configure --with-php-config="$(command -v php-config)" --enable-intl
     echo "#define FALSE 0" >> config.h
     echo "#define TRUE 1" >> config.h
     [[ "${ICU%.*}" -ge 75 ]] && CXX=17 || CXX=11
