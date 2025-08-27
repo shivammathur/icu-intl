@@ -200,6 +200,6 @@ jobs:
           for v in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3 8.4; do
             icu_version=$(php$v -i | grep "ICU version =>" | sed -e "s|.*=> s*||")
             echo php$v: $icu_version
-            [ "$icu_version" != "${{ matrix.icu }}" ] && 	echo "::warning::failed to setup ${{ matrix.icu }} on php $v"
+            [ "$icu_version" != "${{ matrix.icu }}" ] && echo "::warning::failed to setup ${{ matrix.icu }} on php $v" && exit 1
             php$v -v
           done

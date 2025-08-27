@@ -41,7 +41,7 @@ jobs:
           VERSION: ${{ matrix.php }}
           WORKSPACE: ${{ github.workspace }}
         run: |
-          existing_version=$(gh release view intl 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
+          existing_version=$(gh release view intl-$ICU 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
           if [ "$VERSION-$ICU" != "$existing_version" ] || [ "x${{github.event.inputs.rebuild}}" = "xtrue" ]; then
             bash src/build-intl.sh
             bash src/release-intl.sh
@@ -77,7 +77,7 @@ jobs:
           VERSION: ${{ matrix.php }}
           WORKSPACE: ${{ github.workspace }}
         run: |
-          existing_version=$(gh release view intl 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
+          existing_version=$(gh release view intl-$ICU 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
           if [ "$VERSION-$ICU" != "$existing_version" ] || [ "x${{github.event.inputs.rebuild}}" = "xtrue" ]; then
             bash src/build-intl.sh
             bash src/release-intl.sh
@@ -113,7 +113,7 @@ jobs:
           VERSION: ${{ matrix.php }}
           WORKSPACE: ${{ github.workspace }}
         run: |
-          existing_version=$(gh release view intl 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
+          existing_version=$(gh release view intl-$ICU 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
           if [ "$VERSION-$ICU" != "$existing_version" ] || [ "x${{github.event.inputs.rebuild}}" = "xtrue" ]; then
             bash src/build-intl.sh
             bash src/release-intl.sh
@@ -149,7 +149,7 @@ jobs:
           VERSION: ${{ matrix.php }}
           WORKSPACE: ${{ github.workspace }}
         run: |
-          existing_version=$(gh release view intl 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
+          existing_version=$(gh release view intl-$ICU 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
           if [ "$VERSION-$ICU" != "$existing_version" ] || [ "x${{github.event.inputs.rebuild}}" = "xtrue" ]; then
             bash src/build-intl.sh
             bash src/release-intl.sh
@@ -185,7 +185,7 @@ jobs:
           VERSION: ${{ matrix.php }}
           WORKSPACE: ${{ github.workspace }}
         run: |
-          existing_version=$(gh release view intl 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
+          existing_version=$(gh release view intl-$ICU 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
           if [ "$VERSION-$ICU" != "$existing_version" ] || [ "x${{github.event.inputs.rebuild}}" = "xtrue" ]; then
             bash src/build-intl.sh
             bash src/release-intl.sh
@@ -221,7 +221,7 @@ jobs:
           VERSION: ${{ matrix.php }}
           WORKSPACE: ${{ github.workspace }}
         run: |
-          existing_version=$(gh release view intl 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
+          existing_version=$(gh release view intl-$ICU 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
           if [ "$VERSION-$ICU" != "$existing_version" ] || [ "x${{github.event.inputs.rebuild}}" = "xtrue" ]; then
             bash src/build-intl.sh
             bash src/release-intl.sh
@@ -257,7 +257,7 @@ jobs:
           VERSION: ${{ matrix.php }}
           WORKSPACE: ${{ github.workspace }}
         run: |
-          existing_version=$(gh release view intl 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
+          existing_version=$(gh release view intl-$ICU 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
           if [ "$VERSION-$ICU" != "$existing_version" ] || [ "x${{github.event.inputs.rebuild}}" = "xtrue" ]; then
             bash src/build-intl.sh
             bash src/release-intl.sh
@@ -293,7 +293,7 @@ jobs:
           VERSION: ${{ matrix.php }}
           WORKSPACE: ${{ github.workspace }}
         run: |
-          existing_version=$(gh release view intl 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
+          existing_version=$(gh release view intl-$ICU 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
           if [ "$VERSION-$ICU" != "$existing_version" ] || [ "x${{github.event.inputs.rebuild}}" = "xtrue" ]; then
             bash src/build-intl.sh
             bash src/release-intl.sh

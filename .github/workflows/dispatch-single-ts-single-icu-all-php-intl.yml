@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+        php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
         os: [ubuntu-latest, ubuntu-22.04-arm]
         include:
           - os: ubuntu-latest
@@ -52,7 +52,7 @@ jobs:
           VERSION: ${{ matrix.php }}
           WORKSPACE: ${{ github.workspace }}
         run: |
-          existing_version=$(gh release view intl 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
+          existing_version=$(gh release view intl-$ICU 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
           if [ "$VERSION-$ICU" != "$existing_version" ] || [ "x${{github.event.inputs.rebuild}}" = "xtrue" ]; then
             bash src/build-intl.sh
             bash src/release-intl.sh
