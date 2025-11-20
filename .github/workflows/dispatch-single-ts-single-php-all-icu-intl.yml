@@ -16,6 +16,8 @@ jobs:
   php-intl:
     container: ${{ matrix.container }}
     runs-on: ${{ matrix.os }}
+    env:
+      SKIP_PHP85: ${{ github.event.inputs.php == '8.5' && matrix.icu < 57 }}
     strategy:
       fail-fast: false
       matrix:
@@ -28,21 +30,28 @@ jobs:
             container: arm64v8/ubuntu:jammy
     name: php-intl
     steps:
+      - name: Skip unsupported PHP 8.5 build
+        if: ${{ env.SKIP_PHP85 == 'true' }}
+        run: echo "Skipping PHP 8.5 for ICU ${{ matrix.icu }}"
       - name: ${{github.event.inputs.php}}
         id: print_details
+        if: ${{ env.SKIP_PHP85 != 'true' }}
         run: |
           echo sender=${{github.event.sender.login}}
           echo PHP=${{github.event.inputs.php}}
           echo TS=${{github.event.inputs.ts}}
       - name: Checkout
         uses: actions/checkout@v4
+        if: ${{ env.SKIP_PHP85 != 'true' }}
       - name: Install requirements
         run: bash src/install-requirements.sh
+        if: ${{ env.SKIP_PHP85 != 'true' }}
         env:
           TS: ${{github.event.inputs.ts}}
           VERSION: ${{github.event.inputs.php}}
       - name: Checkout
         uses: actions/checkout@v4
+        if: ${{ env.SKIP_PHP85 != 'true' }}
       - name: Update intl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -51,6 +60,7 @@ jobs:
           TS: ${{github.event.inputs.ts}}
           VERSION: ${{github.event.inputs.php}}
           WORKSPACE: ${{ github.workspace }}
+        if: ${{ env.SKIP_PHP85 != 'true' }}
         run: |
           existing_version=$(gh release view intl-$ICU 2>/dev/null | grep -Po "$VERSION-$ICU" | head -n 1)
           if [ "$VERSION-$ICU" != "$existing_version" ] || [ "x${{github.event.inputs.rebuild}}" = "xtrue" ]; then
