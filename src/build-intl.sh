@@ -1,5 +1,5 @@
 ext_dir=$(php -i | grep "extension_dir => /" | sed -e "s|.*=> s*||")
-scan_dir=$(php --ini | grep additional | sed -e "s|.*: s*||")
+scan_dir=$(php --ini | grep additional | sed -e "s|.*: s*||" | cut -d '"' -f 2)
 pecl_file="$scan_dir"/99-pecl.ini
 arch="$(arch)"
 [[ "$arch" = "aarch64" || "$arch" = "arm64" ]] && ARCH_SUFFIX='-arm64' || ARCH_SUFFIX=''
