@@ -2,8 +2,8 @@
 
 <a href="https://github.com/shivammathur/icu-intl" title="Test Workflow Status"><img alt="Test Workflow Status" src="https://github.com/shivammathur/icu-intl/workflows/Test%20workflow/badge.svg"></a>
 <a href="https://github.com/shivammathur/icu-intl/blob/main/LICENSE" title="license"><img alt="LICENSE" src="https://img.shields.io/badge/license-MIT-428f7e.svg"></a>
-<a href="https://github.com/shivammathur/icu-intl/#icu4c-builds" title="icu4c builds"><img alt="icu4c builds" src="https://img.shields.io/badge/icu-77.1%20to%2050.2-555555.svg?logo=unicode&logoColor=white&labelColor=de0029">
-<a href="https://github.com/shivammathur/icu-intl/#php-intl" title="php intl builds"><img alt="php intl builds" src="https://img.shields.io/badge/php-5.6%20to%208.4-555555.svg?logo=php&logoColor=white&labelColor=777bb3">
+<a href="https://github.com/shivammathur/icu-intl/#icu4c-builds" title="icu4c builds"><img alt="icu4c builds" src="https://img.shields.io/badge/icu-78.2%20to%2050.2-555555.svg?logo=unicode&logoColor=white&labelColor=de0029">
+<a href="https://github.com/shivammathur/icu-intl/#php-intl" title="php intl builds"><img alt="php intl builds" src="https://img.shields.io/badge/php-5.6%20to%208.5-555555.svg?logo=php&logoColor=white&labelColor=777bb3">
 
 > Build icu4c and PHP intl extension for Ubuntu.
 
