@@ -2,6 +2,9 @@ name: 'Test workflow'
 on:
   workflow_dispatch:
     inputs:
+      icu:
+        description: ICU version (leave empty to test all versions)
+        required: false
       skip_x86_64:
         description: skip x86_64 builds
         required: false
@@ -15,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-24.04, ubuntu-22.04]
-        icu: [78.3, 78.2, 78.1, 77.1, 76.1, 75.1, 74.2, 74.1, 73.2, 73.1, 72.1, 71.1, 70.1, 69.1, 68.2, 68.1, 67.1, 66.1, 65.1, 64.2, 63.2, 62.2, 61.2, 60.3, 59.2, 58.3, 57.2]
+        icu: ${{ fromJSON(inputs.icu && format('[{0}]', inputs.icu) || '[79.1, 78.3, 78.2, 78.1, 77.1, 76.1, 75.1, 74.2, 74.1, 73.2, 73.1, 72.1, 71.1, 70.1, 69.1, 68.2, 68.1, 67.1, 66.1, 65.1, 64.2, 63.2, 62.2, 61.2, 60.3, 59.2, 58.3, 57.2]') }}
         ts: ['ts', 'nts']
     if: "!contains(inputs.skip_x86_64, 'true')"
     steps:
@@ -116,7 +119,11 @@ jobs:
             fi
             icu_version=$(php$v -i | grep "ICU version =>" | sed -e "s|.*=> s*||")
             echo php$v: $icu_version
-            [ "$icu_version" != "${{ matrix.icu }}" ] && echo "::warning::failed to setup ${{ matrix.icu }} on php $v"
+            if [ "$icu_version" != "${{ matrix.icu }}" ]; then
+              echo "::error::failed to setup ${{ matrix.icu }} on php $v"
+              exit 1
+            fi
+            php$v -r 'if (Normalizer::normalize("e\xCC\x81") !== "\xC3\xA9" || collator_compare(collator_create("en_US"), "a", "b") >= 0) { exit(1); }'
             php$v -v
           done
   intl_aarch64:
@@ -125,7 +132,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-22.04-arm, ubuntu-24.04-arm]
-        icu: [78.3, 78.2, 78.1, 77.1, 76.1, 75.1, 74.2, 74.1, 73.2, 73.1, 72.1, 71.1, 70.1, 69.1, 68.2, 68.1, 67.1, 66.1, 65.1, 64.2, 63.2, 62.2, 61.2, 60.3, 59.2, 58.3, 57.2]
+        icu: ${{ fromJSON(inputs.icu && format('[{0}]', inputs.icu) || '[79.1, 78.3, 78.2, 78.1, 77.1, 76.1, 75.1, 74.2, 74.1, 73.2, 73.1, 72.1, 71.1, 70.1, 69.1, 68.2, 68.1, 67.1, 66.1, 65.1, 64.2, 63.2, 62.2, 61.2, 60.3, 59.2, 58.3, 57.2]') }}
         ts: ['ts', 'nts']
     if: "!contains(inputs.skip_aarch64, 'true')"
     steps:
@@ -226,6 +233,10 @@ jobs:
             fi
             icu_version=$(php$v -i | grep "ICU version =>" | sed -e "s|.*=> s*||")
             echo php$v: $icu_version
-            [ "$icu_version" != "${{ matrix.icu }}" ] && echo "::warning::failed to setup ${{ matrix.icu }} on php $v" && exit 1
+            if [ "$icu_version" != "${{ matrix.icu }}" ]; then
+              echo "::error::failed to setup ${{ matrix.icu }} on php $v"
+              exit 1
+            fi
+            php$v -r 'if (Normalizer::normalize("e\xCC\x81") !== "\xC3\xA9" || collator_compare(collator_create("en_US"), "a", "b") >= 0) { exit(1); }'
             php$v -v
           done

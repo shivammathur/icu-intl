@@ -33,7 +33,7 @@ jobs:
       - name: Skip unsupported PHP 8.5 build
         if: ${{ env.SKIP_PHP85 == 'true' }}
         run: echo "Skipping PHP 8.5 for ICU ${{ github.event.inputs.icu }}"
-      - name: ${{github.event.inputs.php}}
+      - name: ${{ matrix.php }}
         id: print_details
         if: ${{ env.SKIP_PHP85 != 'true' }}
         run: |
