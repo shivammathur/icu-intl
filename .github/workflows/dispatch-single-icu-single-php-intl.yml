@@ -14,7 +14,7 @@ on:
 
 jobs:
   php-intl:
-    if: ${{ !(github.event.inputs.php == '8.5' && fromJSON(format('[{0}]', github.event.inputs.icu))[0] < 57) }}
+    if: ${{ !(contains(fromJSON('["8.5", "8.6", "8.7"]'), github.event.inputs.php) && fromJSON(format('[{0}]', github.event.inputs.icu))[0] < 57) }}
     container: ${{ matrix.container }}
     runs-on: ${{ matrix.os }}
     strategy:

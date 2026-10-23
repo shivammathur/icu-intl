@@ -2,6 +2,9 @@ name: 'Test workflow'
 on:
   workflow_dispatch:
     inputs:
+      php:
+        description: PHP versions separated by spaces (leave empty to test all versions)
+        required: false
       icu:
         description: ICU version (leave empty to test all versions)
         required: false
@@ -11,6 +14,8 @@ on:
       skip_aarch64:
         description: skip aarch64 builds
         required: false
+env:
+  PHP_VERSIONS: ${{ inputs.php || '5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3 8.4 8.5 8.6 8.7' }}
 jobs:
   intl_x86_64:
     runs-on: ${{ matrix.os }}
@@ -25,6 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup PHP 5.6
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 5.6 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 5.6
@@ -32,6 +38,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 7.0
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 7.0 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 7.0
@@ -39,6 +46,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 7.1
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 7.1 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 7.1
@@ -46,6 +54,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 7.2
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 7.2 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 7.2
@@ -53,6 +62,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 7.3
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 7.3 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 7.3
@@ -60,6 +70,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 7.4
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 7.4 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 7.4
@@ -67,6 +78,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 8.0
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 8.0 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 8.0
@@ -74,6 +86,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 8.1
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 8.1 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 8.1
@@ -81,6 +94,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 8.2
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 8.2 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 8.2
@@ -88,6 +102,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 8.3
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 8.3 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 8.3
@@ -95,6 +110,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 8.4
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 8.4 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 8.4
@@ -102,9 +118,26 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 8.5
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 8.5 ') && matrix.icu >= 57 }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 8.5
+          extensions: intl-${{ matrix.icu }}
+        env:
+          phpts: ${{ matrix.ts }}
+      - name: Setup PHP 8.6
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 8.6 ') && matrix.icu >= 57 }}
+        uses: shivammathur/setup-php@develop
+        with:
+          php-version: 8.6
+          extensions: intl-${{ matrix.icu }}
+        env:
+          phpts: ${{ matrix.ts }}
+      - name: Setup PHP 8.7
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 8.7 ') && matrix.icu >= 57 }}
+        uses: shivammathur/setup-php@develop
+        with:
+          php-version: 8.7
           extensions: intl-${{ matrix.icu }}
         env:
           phpts: ${{ matrix.ts }}
@@ -112,8 +145,8 @@ jobs:
         run: |
           icu="${{ matrix.icu }}"
           icu_major=${icu%%.*}
-          for v in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3 8.4 8.5; do
-            if [ "$v" = "8.5" ] && [ "$icu_major" -lt 57 ]; then
+          for v in $PHP_VERSIONS; do
+            if [[ "$v" == 8.[5-7] ]] && [ "$icu_major" -lt 57 ]; then
               echo "Skipping php$v for ICU $icu"
               continue
             fi
@@ -139,6 +172,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup PHP 5.6
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 5.6 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 5.6
@@ -146,6 +180,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 7.0
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 7.0 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 7.0
@@ -153,6 +188,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 7.1
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 7.1 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 7.1
@@ -160,6 +196,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 7.2
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 7.2 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 7.2
@@ -167,6 +204,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 7.3
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 7.3 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 7.3
@@ -174,6 +212,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 7.4
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 7.4 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 7.4
@@ -181,6 +220,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 8.0
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 8.0 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 8.0
@@ -188,6 +228,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 8.1
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 8.1 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 8.1
@@ -195,6 +236,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 8.2
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 8.2 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 8.2
@@ -202,6 +244,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 8.3
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 8.3 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 8.3
@@ -209,6 +252,7 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 8.4
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 8.4 ') }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 8.4
@@ -216,9 +260,26 @@ jobs:
         env:
           phpts: ${{ matrix.ts }}
       - name: Setup PHP 8.5
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 8.5 ') && matrix.icu >= 57 }}
         uses: shivammathur/setup-php@develop
         with:
           php-version: 8.5
+          extensions: intl-${{ matrix.icu }}
+        env:
+          phpts: ${{ matrix.ts }}
+      - name: Setup PHP 8.6
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 8.6 ') && matrix.icu >= 57 }}
+        uses: shivammathur/setup-php@develop
+        with:
+          php-version: 8.6
+          extensions: intl-${{ matrix.icu }}
+        env:
+          phpts: ${{ matrix.ts }}
+      - name: Setup PHP 8.7
+        if: ${{ contains(format(' {0} ', env.PHP_VERSIONS), ' 8.7 ') && matrix.icu >= 57 }}
+        uses: shivammathur/setup-php@develop
+        with:
+          php-version: 8.7
           extensions: intl-${{ matrix.icu }}
         env:
           phpts: ${{ matrix.ts }}
@@ -226,8 +287,8 @@ jobs:
         run: |
           icu="${{ matrix.icu }}"
           icu_major=${icu%%.*}
-          for v in 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3 8.4 8.5; do
-            if [ "$v" = "8.5" ] && [ "$icu_major" -lt 57 ]; then
+          for v in $PHP_VERSIONS; do
+            if [[ "$v" == 8.[5-7] ]] && [ "$icu_major" -lt 57 ]; then
               echo "Skipping php$v for ICU $icu"
               continue
             fi

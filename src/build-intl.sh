@@ -21,7 +21,7 @@ get_branch() {
 }
 get_php() {
   branch=$(get_branch)
-  git clone -b "$branch" https://github.com/php/php-src.git /tmp/php-src
+  git clone --depth 1 -b "$branch" https://github.com/php/php-src.git /tmp/php-src
 }
 check_extension() {
   extension=$1
