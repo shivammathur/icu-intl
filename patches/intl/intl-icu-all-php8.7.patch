@@ -1,0 +1,24 @@
+From 8bace525c3c9b0ba0fd366fac6ad77bf0574cae1 Mon Sep 17 00:00:00 2001
+From: Shivam Mathur <shivam_jpr@hotmail.com>
+Date: Sat, 21 Nov 2026 02:35:40 +0530
+Subject: [PATCH] Fix intl compilation with ICU versions before 65
+
+Guard unicode/strenum.h with __cplusplus because older ICU releases expose C++ declarations unconditionally. This restores C compilation of php_intl.c while retaining the include for C++ consumers.
+---
+ ext/intl/common/common_enum.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/ext/intl/common/common_enum.h b/ext/intl/common/common_enum.h
+index aa7931c74f6..cb91a92245a 100644
+--- a/ext/intl/common/common_enum.h
++++ b/ext/intl/common/common_enum.h
+@@ -18,7 +18,9 @@
+ 
+ #include <unicode/umachine.h>
+ 
++#ifdef __cplusplus
+ #include <unicode/strenum.h>
++#endif
+ #include <math.h>
+ #include <php.h>
+ #include "../intl_error.h"
